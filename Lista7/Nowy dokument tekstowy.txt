@@ -1,0 +1,56 @@
+ module PriorityQueueImpl (Cmp: COMPARATOR) : QUEUE with type cmp = Cmp.t =
+  struct
+  type 'a t = { mutable queue : 'a array; mutable s : int; mutable c : int }
+
+  exception EmptyQueue of string
+
+  let size = 15
+
+  let create() = {queue = Array.make size None; s = 0; c = 0 }
+
+  let increase pq = pq.queue <- (Array.append pq.queue (Array.make size None));
+    pq.c <- pq.c + size
+
+  let insert(newElem, pq) = begin if pq.s = pq.c then increase pq;
+  pq.s <- succ pq.s;
+  let m = pq.s in
+  let index = ref m in
+  pq.queue.(!index) <- newElem;
+  while (!index > 1 && (Cmp.compare pq.queue.(!index) pq.queue.((!index)/2)) = BG) do
+  swap(!index, (!index)/2, pq);
+  index := (!index)/2
+  done; pq
+    end
+
+  let retrive pq = if pq.s = 0 then raise EmptyQueue("Priority Queue is EMPTY!!!")
+   else begin let result = pq.queue.(0) in
+  pq.queue.(0) <- pq.queue.(pq.s);
+  pq.queue.(pq.s) <- None;
+  repair(pq, 0);
+  result
+    end
+
+  let repair pq index =
+  if index < pq.s then begin
+  let left = 2*index + 1 in
+  let right = 2*index + 2 in
+  if left < pq.s then begin
+
+  if right >= pq.s then begin if (Cmp.compare pq.queue.(index) pq.queue.(left)) = BG then swap(index, left, pq); repair(pq,left) end
+
+  else if (Cmp.compare pq.queue.(left) pq.queue.(right)) = SM then begin if (Cmp.compare pq.queue.(index) pq.queue.(left)) = BG then swap(index, left, pq); repair(pq,left) end
+
+  else begin if (Cmp.compare pq.queue.(index) pq.queue.(right)) = BG then swap(index, right); repair(pq, right) end
+
+  end;
+  end
+
+  let swap (left, right, pq) =
+  if left <> right then begin let temp = pq.queue.(left) in
+  pq.queue.(left) <- pq.queue.(right);
+  pq.queue.(right) <- temp
+    end
+
+  let isEmpty pq = pq.s = 0
+
+  end;;

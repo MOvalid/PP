@@ -1,0 +1,87 @@
+##### MODYFIKACJA #####
+OCaml
+	
+let (>=>) list f =
+  match list with
+  | h1::h2::t -> let accf acc n = (f (List.hd acc) n) :: acc 
+                 in List.rev (List.fold_left accf [f h1 h2] t)
+  | _         -> [];;
+ 
+let add x y = x+y;; 
+  
+let lst = [1;2;3;4;5];;
+
+lst>=>add;;
+
+lst>=>add>=>add;;
+
+[]>=>add;;
+
+[1]>=>add;;
+
+####################
+OCaml
+
+let rec (>=>) list f =
+    match list with
+    |  h1::h2::t -> let res = f h1 h2 in res :: ((res::t)>=>f)
+    |  _             -> [];;
+
+
+let rec collapse list f =
+    match list with
+    |  _::_::_ -> collapse (list>=>f) f
+    |  _::_    -> list
+    |  _       -> [];;
+
+let add x y = x+y;;
+
+let sub x y = x-y;;
+
+let mul x y = x*y;;
+
+let lst = [1;2;3;4;5];;
+
+[] >=> add;;
+
+[1] >=> add;;
+
+lst >=> add;;
+
+lst >=> sub;;
+
+lst >=> mul;;
+
+lst >=> add >=> sub;;
+
+lst >=> sub >=> add;;
+
+lst >=> add;;
+
+lst >=> add >=> add;;
+
+lst >=> add >=> add >=> add;;
+
+lst >=> add >=> add >=> add >=> add;;
+
+lst >=> add >=> add >=> add >=> add >=> add;;
+
+collapse lst add;;
+
+(collapse lst add) = (lst >=> add >=> add >=> add >=> add);;
+
+let lst2 = ["A";"B";"C";"D"];;
+
+let con x y = x^y;;
+
+lst2 >=> con;;
+
+lst2 >=> con >=> con;;
+
+lst2 >=> con >=> con >=> con;;
+
+lst2 >=> con >=> con >=> con >=> con;;
+
+collapse lst2 con;;
+
+(collapse lst2 con) = (lst2 >=> con >=> con >=> con);;

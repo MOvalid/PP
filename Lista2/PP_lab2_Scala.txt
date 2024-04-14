@@ -1,0 +1,147 @@
+ZADANIE 1
+
+def find[A](list: List[A], n: A): Boolean = {
+  list match
+    case List()           => false
+    case h :: t if h == n => true
+    case h :: t           => find(t, n)
+}
+
+def find123(n: Int) = find(List(1,2,3), n)
+
+def findABC(n: Char) = find(List('A','B','C'), n)
+
+def Find[A](list: List[A])(n: A): Boolean = {
+  list match
+    case List()           => false
+    case h :: t if h == n => true
+    case h :: t           => Find(t)(n)
+}
+
+def Find123 = Find(List(1,2,3))
+def FindABC = Find(List('A','B','C'))
+
+Find123(3)
+find123(3)
+findABC('D')
+FindABC('D')
+
+find(List(0,54,34,6,31,2,1,46),1)
+find(List(1,2,3,4,5),0)
+find(List(),5)
+
+find123(0)
+find123(1)
+find123(2)
+find123(3)
+find123(4)
+
+
+ZADANIE 2A
+
+def split3[A](list: List[A]): (List[A], List[A], List[A]) =
+{
+  list match
+    case List()        => (List(),List(),List())
+    case h1::h2::h3::t =>
+                          val (t1,t2,t3) = split3(t)
+                          (h1::t1, h2::t2, h3::t3)
+    case h1::h2::t     => (List(h1),List(h2),List())
+    case h1::t         => (List(h1),List(),List())
+}
+
+//def Split3[A](list: List[A]): (List[A], List[A], List[A]) =
+//{
+//  list match
+//    case List() => (List(),List(),List())
+//    case h::t   =>
+//                  val (t1,t2,t3) = Split3(t)
+//                  (h::t3, t1, t2)
+//}
+
+split3(List())
+split3(List(1))
+split3(List(1,2))
+split3(List(1,2,3))
+split3(List(1,2,3,4))
+split3(List(1,2,3,4,5))
+
+//Split3(List())
+//Split3(List(1))
+//Split3(List(1,2))
+//Split3(List(1,2,3))
+//Split3(List(1,2,3,4))
+//Split3(List(1,2,3,4,5))
+
+ZADANIE 2B
+//def Split3Tail[A](list: List[A]): (List[A], List[A], List[A]) =
+//{
+//  def Split3[A](list0: List[A], list1: List[A], list2: List[A], list3: List[A]): (List[A], List[A], List[A]) =
+//  {
+//      list0 match
+//        case List() => (list1,list2,list3)
+//        case h::t   => Split3(t, list3 ::: List(h), list1, list2)
+//  }
+//   Split3(list, List(), List(), List())
+//}
+//
+//def Split3Tail[A](list: List[A]): (List[A], List[A], List[A]) =
+//{
+//  def Split3[A](four: (List[A],  List[A],  List[A], List[A])): (List[A], List[A], List[A]) =
+//  {
+//    val (list0, list1, list2, list3) = four
+//    list0 match
+//      case List() => (list1,list2,list3)
+//      case h::t   => Split3(t, list3 ::: List(h), list1, list2)
+//  }
+//  Split3(list, List(), List(), List())
+//}
+//Split3Tail(List())
+//Split3Tail(List(1))
+//Split3Tail(List(1,2))
+//Split3Tail(List(1,2,3))
+//Split3Tail(List(1,2,3,4))
+//Split3Tail(List(1,2,3,4,5))
+//Split3Tail(List(1,2,3,4,5,6))
+//Split3Tail(List(1,2,3,4,5,6,7))
+
+
+
+//def Split3Tail1[A](list: List[A]): (List[A], List[A], List[A]) =
+//{
+//  def Split31[A](list0: List[A], list1: List[A], list2: List[A], list3: List[A])): (List[A], List[A], List[A]) =
+//  {
+//    list0 match
+//      case List() => (list1,list2,list3)
+//      case h1::h2::h3::t   => Split31(t, h1::list1, h2::list2, h3::list3)
+//      case h1::h2::t       => Split31(t, h1::list1, h2::list2, list3)
+//      case h1::t           => Split31(t, h1::list1, list2, list3)
+//  }
+//  Split31(list, List(), List(), List())
+//}
+
+def Split3Tail1[A](list: List[A]): (List[A], List[A], List[A]) =
+{
+  def Split31[A](four: (List[A],  List[A],  List[A], List[A])): (List[A], List[A], List[A]) =
+  {
+    val (list0, list1, list2, list3) = four
+    list0 match
+      case List()          => (list1,list2,list3)
+      case h1::h2::h3::t   => Split31(t, h1::list1, h2::list2, h3::list3)
+      case h1::h2::t       => Split31(t, h1::list1, h2::list2, list3)
+      case h1::t           => Split31(t, h1::list1, list2, list3)
+  }
+  Split31(list, List(), List(), List())
+}
+
+Split3Tail1(List())
+Split3Tail1(List(1))
+Split3Tail1(List(1,2))
+Split3Tail1(List(1,2,3))
+Split3Tail1(List(1,2,3,4))
+Split3Tail1(List(1,2,3,4,5))
+Split3Tail1(List(1,2,3,4,5,6))
+Split3Tail1(List(1,2,3,4,5,6,7))
+
+
+

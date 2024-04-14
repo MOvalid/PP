@@ -1,0 +1,61 @@
+
+def pascalTrapezoidF(indexOfLine: Int): List[Int] = {
+
+  def addNumbersInLine(list: List[Int], accum: List[Int]): List[Int] = {
+    list match
+      case e1 :: e2 :: e3 :: _ => addNumbersInLine(list.tail, (e1 + e2 + e3) :: accum)
+      case _                   => accum
+  }
+
+  def createLine(indexOfLine: Int, list: List[Int]): List[Int] = {
+    indexOfLine match
+      case 0 => list
+      case _ => createLine(indexOfLine - 1, 1 :: 1 :: addNumbersInLine(list, List(1, 1)))
+  }
+
+  if indexOfLine < 0 then List()
+  else createLine(indexOfLine, List(1,1,1))
+
+}
+
+
+pascalTrapezoidF(-1)
+pascalTrapezoidF(0)
+pascalTrapezoidF(1)
+pascalTrapezoidF(2)
+pascalTrapezoidF(3)
+pascalTrapezoidF(4)
+pascalTrapezoidF(5)
+pascalTrapezoidF(6)
+
+
+
+
+def pascalTrapezoidI(indexOfLine: Int): Array[Int] = {
+  if indexOfLine < 0 then Array[Int]()
+  else
+    var middle = 2
+    val result = Array.fill(2 * (indexOfLine + 1) + 1)(1)
+
+    for (_ <- 0 until indexOfLine){
+      var previous1, previous2 = 1
+      for (j <- 2 to middle){
+          val sum = previous1 + previous2 + result(j)
+          previous1 = previous2
+          previous2 = result(j)
+          result(j) = sum
+          result(2 * middle - j) = sum
+      }
+      middle = middle + 1
+    }
+    result
+}
+
+pascalTrapezoidI(-1)
+pascalTrapezoidI(0)
+pascalTrapezoidI(1)
+pascalTrapezoidI(2)
+pascalTrapezoidI(3)
+pascalTrapezoidI(4)
+pascalTrapezoidI(5)
+pascalTrapezoidI(6)

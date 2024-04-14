@@ -1,0 +1,59 @@
+ZADANIE 1
+
+let rec fnd list n = 
+  match list with
+  | []              -> false
+  | h::t when h = n -> true
+  | h::t            -> fnd t n;; 
+  
+let find123 n = fnd [1;2;3];;
+
+
+find123 1;;
+find123 2;;
+find123 3;;
+find123 4;;
+
+fnd ['C';'B';'A'] 'A' ;;
+fnd ['C';'B';'A'] 'B' ;;
+fnd ['C';'B';'A'] 'C' ;;
+fnd ['C';'B';'A'] 'D' ;;
+
+
+ZADANIE 2A
+
+let rec split3 list =
+  match list with
+   | []            -> ([],[],[])
+   | h1::h2::h3::t -> let(t1,t2,t3) = split3 t in (h1::t1, h2::t2, h3::t3)                
+   | h1::h2::t     -> (h1::[], h2::[],[])
+   | h1::t         -> (h1::[],[],[]);; 
+   
+   
+split3 [1;2;3;4;5;6;7];;   
+split3 [1;2;3;4;5;6];;   
+split3 [1;2;3;4;5];;
+split3 [];;
+split3 [[1;2;3];[4;5];[6];[]];; 
+  
+   
+ZADANIE 2B   
+
+ 
+
+let split3tail list =
+  let rec split3 four =
+    let (list0,list1,list2,list3) = four in
+    match list0 with
+     | []            -> (list1, list2, list3)
+     | h1::h2::h3::t ->  split3 (t, h1::list1, h2::list2, h3::list3)                
+     | h1::h2::t     -> (h1::list1, h2::list2, list3)
+     | h1::t         -> (h1::list1, list2, list3) 
+  in split3 (list, [], [], []) ;;
+  
+  
+split3tail [1;2;3;4;5;6;7];;   
+split3tail [1;2;3;4;5;6];;   
+split3tail [1;2;3;4;5];;
+split3tail [];;
+split3tail [[1;2;3];[4;5];[6];[]];; 

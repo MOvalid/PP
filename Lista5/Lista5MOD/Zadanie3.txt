@@ -1,0 +1,48 @@
+def lpermutation[A](list: LazyList[A]): LazyList[List[A]] = {
+
+  def makePermutation(list: LazyList[List[A]], elem: A, index: Int, counter: Int): LazyList[List[A]] = {
+    (list, index) match
+      case (LazyList(), _)  => LazyList()
+      case (h #:: t, 0)     => insert(h, elem, index) #:: makePermutation(t, elem, counter, counter)
+      case (h #:: _, _)     => insert(h, elem, index) #:: makePermutation(list, elem, index-1, counter)
+  }
+
+  def insert[A](list: List[A], elem: A, index: Int): List[A] =
+  {
+    index match
+      case 0 => elem :: list
+      case _ => list.head :: insert(list.tail, elem, index-1)
+  }
+
+  def lpermutationLoop(list: LazyList[A], result: LazyList[List[A]], n: Int): LazyList[List[A]] =
+  {
+    list match
+      case h #:: LazyList() => makePermutation(result, h, n, n)
+      case h #:: t          => lpermutationLoop(t, makePermutation(result, h, n, n), n+1)
+  }
+
+  list match
+    case LazyList()       => LazyList()
+    case h #:: LazyList() => LazyList(List(h))
+    case h #:: t          => lpermutationLoop(t, LazyList(List(h)), 1)
+}
+
+lpermutation(LazyList()).toList
+
+lpermutation(LazyList(10)).toList
+
+lpermutation(LazyList(10,20)).toList
+
+val rxs = LazyList('a','b','c','d','e')
+
+lpermutation(rxs).toList
+
+lpermutation(rxs).size
+
+val lxs = LazyList(1,2,3,4,5,6)
+
+lpermutation(lxs).toList
+
+lpermutation(lxs).size
+
+lpermutation(LazyList.range(1,1000)).take(10).toList

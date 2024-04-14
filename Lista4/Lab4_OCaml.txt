@@ -1,0 +1,99 @@
+OCaml 
+  
+type h_Element = 
+ | NewLineChar of string 
+ | Heading of int * string 
+ | Title of string
+ | Paragraph of string
+ | HListElement of string
+ | OrderedList of h_Element list
+ | UnorderedList of h_Element list;;   
+
+
+let build lst =
+
+  let rec setIndentation tag1 tag2 howMuch = 
+		match howMuch with
+		| 0 -> (tag1,tag2)
+		| _ -> setIndentation ("\t"^tag1) ("\t"^tag2) (howMuch-1)
+  
+  in let rec readList lst howMuchTab = 
+  
+	let nestedList tag1 tag2 lst howMuchT =
+		let (beginTag, endTag) = setIndentation tag1 tag2 howMuchT in
+		"\n" ^ beginTag ^ (readList lst (howMuchT+1)) ^ endTag
+  
+  in match lst with
+	| [] -> ""
+	| HListElement(text) :: t   				 -> let (beginTag, endTag) = setIndentation "<li>" "</li>\n" howMuchTab
+													in  if t != [] then match (List.hd t) with
+																	| OrderedList(_) | UnorderedList(_) -> beginTag ^ text ^ (readList [List.hd t] howMuchTab) ^ endTag ^ (readList (List.tl t) howMuchTab)
+																	| HListElement(_) 					-> beginTag ^ text ^ "</li>\n" ^ (readList t howMuchTab)
+																	| _ 								-> readList (List.tl t) howMuchTab
+														else beginTag ^ text ^ "</li>\n"
+									
+	| OrderedList(olist) :: t when olist != []   -> (nestedList "<ol>\n" "</ol>\n" olist (howMuchTab+1)) ^ (readList t howMuchTab)
+	| UnorderedList(ulist) :: t when ulist != [] -> (nestedList "<ul>\n" "</ul>\n" ulist (howMuchTab+1)) ^ (readList t howMuchTab)
+	| _ :: t                                     -> readList t howMuchTab
+		
+  in let rec readElement elem isTitleAppeared nextTag =
+	match elem with
+	| NewLineChar(text) 									  -> ("<br>" ^ text, isTitleAppeared, nextTag)
+	
+	| Title(text) when (not isTitleAppeared) 				  -> (nextTag ^ "<head>\n<title>" ^ text, true, "</title>\n</head>\n<body>\n\n")
+
+	| Heading(number, text) when (number >= 1 && number <= 6) -> if (not isTitleAppeared) then (nextTag ^ "<body>\n\n<h" ^ (string_of_int number) ^ ">" ^ text, true, "</h" ^ (string_of_int number) ^ ">\n") 
+																 else (nextTag ^ "<h" ^ (string_of_int number) ^ ">" ^ text, isTitleAppeared, "</h" ^ (string_of_int number) ^ ">\n")
+	| Paragraph(text)                                         -> if (not isTitleAppeared) then (nextTag ^ "<body>\n\n<p>" ^ text, true, "</p>\n")
+																 else (nextTag ^ "<p>" ^ text, isTitleAppeared, "</p>\n")
+	
+	| OrderedList(olst) when olst != []					      -> if (not isTitleAppeared) then (nextTag ^ "<body>\n\n<ol>\n" ^ (readList olst 1) ^ "</ol>\n", true, "")
+																 else (nextTag ^ "<ol>\n" ^ (readList olst 1) ^ "</ol>\n", isTitleAppeared, "")
+	
+	| UnorderedList(ulst) when ulst != [] 				      -> if (not isTitleAppeared) then (nextTag ^ "<body>\n\n<ul>\n" ^ (readList ulst 1) ^ "</ul>\n", true, "")
+																 else (nextTag ^ "<ul>\n" ^ (readList ulst 1) ^ "</ul>\n", isTitleAppeared, "")
+	
+	| _ 													  -> ("", isTitleAppeared, nextTag)
+	
+  in let rec makeHTMLpage lst isTitleAppeared nextTag =
+	match lst with
+	| []   -> ""
+	| h::t -> let (text, boolTitle, nextT) = readElement h isTitleAppeared nextTag
+			  in text ^ (makeHTMLpage t boolTitle nextT)
+	
+  in match lst with 
+	 | [] -> print_string ""
+	 | _  -> let result =(makeHTMLpage lst false "\n<!DOCTYPE html>\n<html>\n") ^ "\n</body>\n</html>\n" in print_string result;;
+	 
+
+let l1 = [HListElement("Tea"); HListElement("Milk"); HListElement("Coffee")];;
+
+
+let l  = [HListElement("Whole milk"); HListElement("Soy Milk"); HListElement("Almond milk")];;
+
+
+let l2 = [HListElement("With milk"); UnorderedList(l); HListElement("With sugar"); HListElement("With milk and sugar")];;
+
+
+let ol3 = [HListElement("Tea"); HListElement("Milk"); HListElement("Coffee"); OrderedList(l2)];;
+
+
+let ul3 = [HListElement("Tea"); HListElement("Milk"); HListElement("Coffee"); OrderedList(l2)];;
+
+
+let listHTML1 = [Title("Page Title 1"); Title("Page Title 2"); Heading(7, "First Heading"); Paragraph("First paragraph"); OrderedList(l1); UnorderedList(l1)];;
+
+
+let listHTML2 = [Heading(1,"First"); NewLineChar("Heading"); Paragraph("First paragraph"); OrderedList(ul3); UnorderedList(ol3)];;
+
+
+let listHTML3 = [Heading(1,"First"); NewLineChar("Heading"); Paragraph("First paragraph"); OrderedList([Heading(1,"First"); NewLineChar("Heading"); Paragraph("First paragraph")])];;
+
+
+build listHTML1;;
+
+
+build listHTML2;;
+
+
+build listHTML3;;

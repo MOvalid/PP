@@ -1,0 +1,79 @@
+module PriorityQueueImpl (Cmp : COMPARATOR) =
+  struct
+  type element = Cmp.t
+  type q = { mutable queue : element option array; mutable s : int; mutable c : int }
+
+  exception EmptyQueue of string
+
+  let size = 15
+
+      let create() = { queue = (Array.make size None); s = 0; c = size }
+
+  let get elem =
+  match elem with
+  | Some x -> x
+  | None   -> failwith "None"
+
+
+  let swap (left, right, pq) =
+  if left != right then begin let temp = pq.queue.(left) in
+  pq.queue.(left) <- pq.queue.(right);
+  pq.queue.(right) <- temp
+    end
+
+  let increase pq = pq.queue <- (Array.append pq.queue (Array.make size None));
+    pq.c <- pq.c + size
+
+
+  let insert(newElem, pq) = begin if pq.s = pq.c then increase pq;
+  pq.queue.(pq.s) <- Some newElem;
+  pq.s <- succ pq.s;
+  if(pq.s > 1) then begin
+  let child = ref (pq.s - 1) in
+  while (!child >= 1 && (Cmp.compare (get pq.queue.(!child)) (get pq.queue.((!child - 1)/2))) = BG) do
+  swap(!child, (!child - 1)/2, pq);
+  child := (!child - 1)/2
+  done;
+  end
+    end; pq
+
+  let rec repair pq index =
+  if index < pq.s then begin
+  let left = 2*index + 1 in
+  let right = 2*index + 2 in
+  if left < pq.s then begin
+
+  if right >= pq.s then if (Cmp.compare (get pq.queue.(index)) (get pq.queue.(left)) ) = BG then begin swap(index, left, pq); repair(pq,left) end
+
+  else if (Cmp.compare (get pq.queue.(left)) (get pq.queue.(right)) ) = SM then if (Cmp.compare (get pq.queue.(index)) (get pq.queue.(left)) ) = BG then begin swap(index, left, pq); repair(pq,left) end
+
+  else if (Cmp.compare (get pq.queue.(index)) (get pq.queue.(right)) ) = BG then begin swap(index, right, pq); repair(pq, right) end
+
+  end
+  end
+
+
+
+  let top pq = if pq.s = 0 then raise (EmptyQueue "Priority Queue is EMPTY!!!")
+   else (get pq.queue.(0))
+
+  let isTopNone pq = pq.queue.(0) = None
+
+
+  let retrive pq = if pq.s = 0 then raise (EmptyQueue "Priority Queue is EMPTY!!!")
+   else begin let result = (get pq.queue.(0)) in
+  pq.queue.(0) <- None;
+  pq.s <- pred pq.s;
+  swap(0, pq.s, pq);
+  repair(pq, 0);
+  result
+    end
+
+
+  let isEmpty pq = pq.s = 0
+
+  let show pq = pq.queue
+
+  let compareTop pq = (((Cmp.compare (get pq.queue.(0)) (get pq.queue.(1))) = BG) && ((Cmp.compare (get pq.queue.(0)) (get pq.queue.(2))) = BG))
+
+  end;;

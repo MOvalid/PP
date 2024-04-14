@@ -1,0 +1,130 @@
+ZADANIE 1
+
+let rec find n list = 
+  match list with
+  | []              -> false
+  | h::t when h = n -> true
+  | h::t            -> find n t;;
+ 
+let find123 n = find n [1;2;3];;
+  
+let rec fnd double = 
+  let (n, list) = double in
+  match list with
+  | []              -> false
+  | h::t when h = n -> true
+  | h::t            -> fnd (n, t);; 
+  
+let Find123 n = Find (n, [1;2;3]);;
+
+find123 1;;
+find123 2;;
+find123 3;;
+find123 4;;
+
+Find123 1;;
+Find123 2;;
+Find123 3;;
+Find123 4;;
+
+find 'A' ['C','B','A'];;
+find 'B' ['C','B','A'];;
+find 'C' ['C','B','A'];;
+find 'D' ['C','B','A'];;
+
+fnd ('A', ['C','B','A']);;
+fnd ('B', ['C','B','A']);;
+fnd ('C', ['C','B','A']);;
+fnd ('D', ['C','B','A']);;
+
+
+ZADANIE 2A
+
+let rec split3 list =
+  match list with
+   | []            -> ([],[],[])
+   | h1::h2::h3::t -> let(t1,t2,t3) = split3 t in (h1::t1, h2::t2, h3::t3)                
+   | h1::h2::t     -> (h1::[], h2::[],[])
+   | h1::t         -> (h1::[],[],[]);; 
+   
+let rec _split3 list =
+  match list with
+   | []   -> ([],[],[])
+   | h::t -> let(t1,t2,t3) = _split3 t in (h::t3, t1, t2);;
+   
+split3 [1;2;3;4;5;6;7];;   
+split3 [1;2;3;4;5;6];;   
+split3 [1;2;3;4;5];;
+split3 [];;
+
+_split3 [1;2;3;4;5;6;7];;   
+_split3 [1;2;3;4;5;6];;   
+_split3 [1;2;3;4;5];;
+_split3 [];;
+  
+   
+ZADANIE 2B   
+
+
+////////////////
+//let split3Tail list =
+//  let rec split3 list0 list1 list2 list3 =
+//    match list0 with
+//    | []   -> (list1,list2,list3)
+//    | h::t -> split3 t (h::list3) list1 list2
+//  in split3 list [] [] [] ;;
+//  
+//let split3Tail list =
+//let rec split3 four =
+//    let (list0,list1,list2,list3) = four in
+//    match list0 with
+//    | []   -> (list1,list2,list3)
+//    | h::t -> split3 (t, [h] @ list3, list1, list2)
+//  in split3 (list, [], [], []) ;;
+//  
+/////////////////
+
+let split3tail list =
+  let rec spliT3 list0 list1 list2 list3 =
+    match list0 with
+   | []            -> (list1,list2,list3)
+   | h1::h2::h3::t ->  spliT3 t (h1::list1) (h2::list2) (h3::list3)                
+   | h1::h2::t     -> (h1::list1, h2::list2, list3)
+   | h1::t         -> (h1::list1, list2, list3) 
+  in spliT3 list [] [] [] ;;
+ 
+
+let split3Tail list =
+  let rec split3 four =
+    let (list0,list1,list2,list3) = four in
+    match list0 with
+     | []            -> (list1, list2, list3)
+     | h1::h2::h3::t ->  split3 (t, h1::list1, h2::list2, h3::list3)                
+     | h1::h2::t     -> (h1::list1, h2::list2, list3)
+     | h1::t         -> (h1::list1, list2, list3) 
+  in split3 (list, [], [], []) ;;
+  
+let _split3Tail list =
+  let rec _split3 four =
+    let (list0,list1,list2,list3) = four in
+    match list0 with
+    | []   -> (list1,list2,list3)
+    | h::t -> _split3 (t, h::list3, list1, list2)
+  in _split3 (list, [], [], []) ;;
+  
+split3tail [1;2;3;4;5;6;7];;   
+split3tail [1;2;3;4;5;6];;   
+split3tail [1;2;3;4;5];;
+split3tail [];;
+split3tail [[1;2;3];[4;5];[6];[]];; 
+
+split3Tail [1;2;3;4;5;6;7];;   
+split3Tail [1;2;3;4;5;6];;   
+split3Tail [1;2;3;4;5];;
+split3Tail [];;
+split3Tail [[1;2;3];[4;5];[6];[]];; 
+
+_split3Tail [1;2;3;4;5;6;7];;   
+_split3Tail [1;2;3;4;5;6];;   
+_split3Tail [1;2;3;4;5];;
+_split3Tail [];;

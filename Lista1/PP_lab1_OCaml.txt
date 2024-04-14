@@ -1,0 +1,46 @@
+let rec remove pos lst = match lst with
+  | [] -> lst
+  | x::rest -> if pos < 0 then lst
+               else if pos = 0 then rest
+               else x::remove (pos-1) rest;;
+
+let mirror4(a,b,c,d) = (b,a,d,c);;
+
+let rec rotations lst = match lst with
+  | [] -> 0.0
+  | x1::[] -> if x1 = 0 then 0.0
+              else 1.0
+  | x1::x2::rest -> if x1 = 0 || x2 = 0 then 0.0
+                    else -1.0 *. (float) x1 /. (float) x2 *. rotations (x2::rest);;
+
+##### MODYFIKACJA ####
+
+let rec rotations lst = match lst with
+  | [] -> 0.0
+  | x1::[] -> if x1 = 0 then 0.0
+              else if x1 < 0 then -1.0
+              else 1.0
+  | x1::x2::rest -> if x1 = 0 || x2 = 0 then 0.0
+                    else -1.0 *. (float) x1 /. (float) (abs x2) *. rotations(x2::rest);;
+
+#######################
+
+remove 1 [1;2;3;4];;
+remove 0 [];;
+remove (-11) [1;2;3;4];;
+remove 11 [1;2;3;4];;
+
+mirror4 (3,2.0,'a',"Pol");;
+mirror4 (1,2,3,4);;
+
+rotations [];;
+rotations [20];;
+rotations [-20];;
+rotations [20;10];;
+rotations [20;-10];;
+rotations [-20;10];;
+rotations [-20;-10];;
+rotations [20;20;10];;
+rotations [20;-20;10];;
+rotations [-20;20;-10];;
+rotations [-20;-20;-10];;

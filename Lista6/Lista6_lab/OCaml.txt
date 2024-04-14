@@ -1,0 +1,59 @@
+OCaml
+
+let pascalTrapezoidF indexOfLine =
+	let rec addNumbersInLine lst accum = 
+		match lst with
+		| e1 :: e2 :: e3 :: _ -> addNumbersInLine (List.tl lst) ((e1+e2+e3) :: accum)
+		| _                   -> accum
+	
+	in let rec createLine indexOfLine lst =
+		match indexOfLine with
+		| 0 -> lst
+		| _ -> createLine (indexOfLine-1) ([1;1] @ (addNumbersInLine lst [1;1]))
+	
+	in if indexOfLine < 0 then [] else createLine indexOfLine [1;1;1];;
+
+pascalTrapezoidF (-1);;	
+pascalTrapezoidF 0;;
+pascalTrapezoidF 1;;
+pascalTrapezoidF 2;;
+pascalTrapezoidF 3;;
+pascalTrapezoidF 4;;
+pascalTrapezoidF 5;;
+pascalTrapezoidF 6;;
+
+
+
+OCaml
+
+let pascalTrapezoidI indexOfLine =
+  if indexOfLine < 0 then [||]
+  
+  else 
+	let middle = ref 2 in
+	let result = Array.make (2 * (indexOfLine + 1) + 1) 1 in 
+	
+	for _ = 0 to (indexOfLine-1) do
+	  let previous1 = ref 1 in
+	  let previous2 = ref 1 in
+	  
+	  for j = 2 to !middle do
+	  
+		let sum = !previous1 + !previous2 + result.(j) in
+		previous1 := !previous2;
+		previous2 := result.(j);
+		result.(j) <- sum;
+		result.(2 * !middle - j) <- sum
+			 
+	  done; middle := !middle + 1
+    
+	done; result;;
+	
+pascalTrapezoidI (-1);;	
+pascalTrapezoidI 0;;
+pascalTrapezoidI 1;;
+pascalTrapezoidI 2;;
+pascalTrapezoidI 3;;
+pascalTrapezoidI 4;;
+pascalTrapezoidI 5;;
+pascalTrapezoidI 6;;

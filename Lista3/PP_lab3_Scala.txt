@@ -1,0 +1,16 @@
+def primes(n: Int): List[Int] = {
+  if n >= 2 then for (x <- List.range(2,n+1);
+                      if (for(y <- List.range(2,math.sqrt(x).toInt + 1);
+                              if x % y == 0) yield y) == List()) yield x
+  else List()
+}
+
+
+
+primes(100)
+primes(30)
+primes(2)
+primes(-10)
+primes(3)
+primes(1)
+primes(0)
